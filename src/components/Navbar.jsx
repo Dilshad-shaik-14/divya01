@@ -1,14 +1,15 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, Home, Heart, PlusCircle, LogOut } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { Search } from 'lucide-react';
 
 export default function Navbar() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = React.useState('');
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    // Clear user session
+    localStorage.removeItem('user');
+    window.dispatchEvent(new Event('authChange'));
     navigate('/login');
   };
 
@@ -20,11 +21,13 @@ export default function Navbar() {
   return (
     <nav className="bg-white shadow-lg">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="flex justify-between h-16">
-          <div className="flex items-center">
-            <Link to="/" className="flex items-center space-x-2">
-              <Home className="h-6 w-6 text-indigo-600" />
-              <span className="font-bold text-xl">RecipeHub</span>
+        <div className="flex justify-between h-16 items-center">
+          <div className="flex items-center space-x-5">
+            <Link to="/" className="flex items-center">
+              <span className="font-bold text-2xl text-gray-800">RecipeHub</span>
+            </Link>
+            <Link to="/" className="text-indigo-600 text-2xl font-bold">
+              Home
             </Link>
           </div>
 
@@ -45,18 +48,18 @@ export default function Navbar() {
             </form>
           </div>
 
-          <div className="flex items-center space-x-4">
-            <Link to="/wishlist" className="text-gray-600 hover:text-indigo-600">
-              <Heart className="h-6 w-6" />
+          <div className="flex items-center space-x-8">
+            <Link to="/wishlist" className="text-gray-800 text-2xl font-bold hover:text-indigo-600">
+              <span>Wishlist</span>
             </Link>
-            <Link to="/create" className="text-gray-600 hover:text-indigo-600">
-              <PlusCircle className="h-6 w-6" />
+            <Link to="/create" className="text-gray-800 text-2xl font-bold hover:text-indigo-600">
+              <span>Create</span>
             </Link>
             <button
               onClick={handleLogout}
-              className="text-gray-600 hover:text-indigo-600"
+              className="text-gray-800 text-2xl font-bold hover:text-indigo-600"
             >
-              <LogOut className="h-6 w-6" />
+              <span>Logout</span>
             </button>
           </div>
         </div>

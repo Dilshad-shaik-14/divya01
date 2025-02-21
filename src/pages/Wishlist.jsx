@@ -1,98 +1,44 @@
 import React from 'react';
-import { supabase } from '../lib/supabase';
 import RecipeCard from '../components/RecipeCard';
-import toast from 'react-hot-toast';
-import { Heart } from 'lucide-react';
 
 export default function Wishlist() {
-  const [recipes, setRecipes] = React.useState([]);
   const [wishlist, setWishlist] = React.useState([]);
+  const [recipes, setRecipes] = React.useState([]);
 
   React.useEffect(() => {
-    fetchWishlistedRecipes();
+    // Fetch wishlist from local storage or other storage
+    const storedWishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+    setWishlist(storedWishlist);
+
+    // Fetch all recipes from local storage or other storage
+    const storedRecipes = JSON.parse(localStorage.getItem('recipes')) || [];
+    setRecipes(storedRecipes);
   }, []);
 
-  const fetchWishlistedRecipes = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+  const handleWishlistToggle = (recipeId) => {
+    const updatedWishlist = wishlist.includes(recipeId)
+      ? wishlist.filter((id) => id !== recipeId)
+      : [...wishlist, recipeId];
 
-    const { data: wishlistData, error: wishlistError } = await supabase
-      .from('wishlist')
-      .select('recipe_id')
-      .eq('user_id', user.id);
-
-    if (wishlistError) {
-      toast.error('Failed to fetch wishlist');
-      return;
-    }
-
-    const recipeIds = wishlistData.map(item => item.recipe_id);
-    setWishlist(recipeIds);
-
-    if (recipeIds.length === 0) {
-      setRecipes([]);
-      return;
-    }
-
-    const { data: recipesData, error: recipesError } = await supabase
-      .from('recipes')
-      .select('*')
-      .in('id', recipeIds);
-
-    if (recipesError) {
-      toast.error('Failed to fetch recipes');
-      return;
-    }
-
-    setRecipes(recipesData);
+    setWishlist(updatedWishlist);
+    localStorage.setItem('wishlist', JSON.stringify(updatedWishlist));
   };
 
-  const toggleWishlist = async (recipeId) => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      toast.error('Please login to manage wishlist');
-      return;
-    }
-
-    const { error } = await supabase
-      .from('wishlist')
-      .delete()
-      .eq('user_id', user.id)
-      .eq('recipe_id', recipeId);
-
-    if (error) {
-      toast.error('Failed to remove from wishlist');
-      return;
-    }
-
-    setWishlist(wishlist.filter(id => id !== recipeId));
-    setRecipes(recipes.filter(recipe => recipe.id !== recipeId));
-    toast.success('Removed from wishlist');
-  };
+  const wishlistRecipes = recipes.filter((recipe) => wishlist.includes(recipe.id));
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
-      <div className="flex items-center justify-center mb-8">
-        <Heart className="h-8 w-8 text-indigo-600 mr-2" />
-        <h1 className="text-3xl font-bold">My Wishlist</h1>
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">Wishlist</h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {wishlistRecipes.map((recipe) => (
+          <RecipeCard
+            key={recipe.id}
+            recipe={recipe}
+            onWishlistToggle={handleWishlistToggle}
+            isWishlisted={wishlist.includes(recipe.id)}
+          />
+        ))}
       </div>
-
-      {recipes.length === 0 ? (
-        <div className="text-center text-gray-500">
-          No recipes in your wishlist yet
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {recipes.map(recipe => (
-            <RecipeCard
-              key={recipe.id}
-              recipe={recipe}
-              isWishlisted={true}
-              onWishlistToggle={() => toggleWishlist(recipe.id)}
-            />
-          ))}
-        </div>
-      )}
     </div>
   );
 }

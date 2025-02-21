@@ -1,29 +1,33 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import { supabase } from './lib/supabase';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Auth from './pages/Auth';
 import CreateRecipe from './pages/CreateRecipe';
 import Search from './pages/Search';
 import Wishlist from './pages/Wishlist';
+import RecipeDetail from './pages/RecipeDetail';
 
 function App() {
   const [user, setUser] = React.useState(null);
 
   React.useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-    });
+    // Simulate fetching user session from localStorage or other storage
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    setUser(storedUser);
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
+    // Simulate listening to auth state changes
+    const handleAuthChange = () => {
+      const updatedUser = JSON.parse(localStorage.getItem('user'));
+      setUser(updatedUser);
+    };
 
-    return () => subscription.unsubscribe();
+    window.addEventListener('authChange', handleAuthChange);
+
+    return () => {
+      window.removeEventListener('authChange', handleAuthChange);
+    };
   }, []);
 
   return (
@@ -50,6 +54,10 @@ function App() {
           <Route
             path="/wishlist"
             element={user ? <Wishlist /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/recipe/:id"
+            element={user ? <RecipeDetail /> : <Navigate to="/login" />}
           />
         </Routes>
         <Toaster position="top-right" />

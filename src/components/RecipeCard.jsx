@@ -1,12 +1,21 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Heart } from 'lucide-react';
-import { supabase } from '../lib/supabase';
 
 export default function RecipeCard({ recipe, onWishlistToggle, isWishlisted }) {
+  const navigate = useNavigate();
+
+  const handleCardClick = () => {
+    navigate(`/recipe/${recipe.id}`);
+  };
+
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden">
+    <div
+      className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer"
+      onClick={handleCardClick}
+    >
       <img
-        src={recipe.image_url}
+        src={recipe.imageUrl}
         alt={recipe.title}
         className="w-full h-48 object-cover"
       />
@@ -14,7 +23,10 @@ export default function RecipeCard({ recipe, onWishlistToggle, isWishlisted }) {
         <div className="flex justify-between items-start">
           <h3 className="text-xl font-semibold">{recipe.title}</h3>
           <button
-            onClick={onWishlistToggle}
+            onClick={(e) => {
+              e.stopPropagation();
+              onWishlistToggle(recipe.id);
+            }}
             className={`p-2 rounded-full ${
               isWishlisted ? 'text-red-500' : 'text-gray-400'
             }`}
@@ -25,7 +37,7 @@ export default function RecipeCard({ recipe, onWishlistToggle, isWishlisted }) {
         <p className="text-gray-600 mt-2">{recipe.description}</p>
         <div className="mt-4">
           <span className="text-sm text-gray-500">
-            Cooking time: {recipe.cooking_time} minutes
+            Cooking time: {recipe.cookingTime} minutes
           </span>
         </div>
       </div>
