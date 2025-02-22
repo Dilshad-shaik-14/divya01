@@ -35,40 +35,42 @@ export default function Auth() {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">{isSignup ? 'Signup' : 'Login'}</h1>
-      <form onSubmit={handleAuth}>
-        <div className="mb-4">
-          <label className="block text-gray-700">Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700">Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
-        </div>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <h1 className="text-2xl font-bold mb-4 text-center">{isSignup ? 'Signup' : 'Login'}</h1>
+        <form onSubmit={handleAuth}>
+          <div className="mb-4">
+            <label className="block text-gray-700">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700"
+          >
+            {isSignup ? 'Signup' : 'Login'}
+          </button>
+        </form>
         <button
-          type="submit"
-          className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700"
+          onClick={() => setIsSignup(!isSignup)}
+          className="w-full mt-4 text-indigo-600 hover:underline text-center"
         >
-          {isSignup ? 'Signup' : 'Login'}
+          {isSignup ? 'Already have an account? Login' : 'New user? Signup'}
         </button>
-      </form>
-      <button
-        onClick={() => setIsSignup(!isSignup)}
-        className="w-full mt-4 text-indigo-600 hover:underline"
-      >
-        {isSignup ? 'Already have an account? Login' : 'New user? Signup'}
-      </button>
+      </div>
     </div>
   );
 }

@@ -3,25 +3,21 @@ import RecipeCard from '../components/RecipeCard';
 
 export default function Home() {
   const [recipes, setRecipes] = React.useState([]);
-  const [wishlist, setWishlist] = React.useState([]);
 
   React.useEffect(() => {
     // Fetch recipes from local storage or other storage
     const storedRecipes = JSON.parse(localStorage.getItem('recipes')) || [];
     setRecipes(storedRecipes);
-
-    // Fetch wishlist from local storage or other storage
-    const storedWishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
-    setWishlist(storedWishlist);
   }, []);
 
   const handleWishlistToggle = (recipeId) => {
-    const updatedWishlist = wishlist.includes(recipeId)
-      ? wishlist.filter((id) => id !== recipeId)
-      : [...wishlist, recipeId];
+    // Implement wishlist toggle functionality
+  };
 
-    setWishlist(updatedWishlist);
-    localStorage.setItem('wishlist', JSON.stringify(updatedWishlist));
+  const handleDelete = (recipeId) => {
+    const updatedRecipes = recipes.filter((recipe) => recipe.id !== recipeId);
+    setRecipes(updatedRecipes);
+    localStorage.setItem('recipes', JSON.stringify(updatedRecipes));
   };
 
   return (
@@ -33,7 +29,8 @@ export default function Home() {
             key={recipe.id}
             recipe={recipe}
             onWishlistToggle={handleWishlistToggle}
-            isWishlisted={wishlist.includes(recipe.id)}
+            isWishlisted={false} // Implement logic to check if the recipe is wishlisted
+            onDelete={handleDelete}
           />
         ))}
       </div>

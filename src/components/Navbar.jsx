@@ -24,7 +24,7 @@ export default function Navbar() {
         <div className="flex justify-between h-16 items-center">
           <div className="flex items-center space-x-5">
             <Link to="/" className="flex items-center">
-              <span className="font-bold text-2xl text-gray-800">RecipeHub</span>
+              <span className=" flex-start font-bold text-2xl text-gray-800">RecipeHub</span>
             </Link>
             <Link to="/" className="text-indigo-600 text-2xl font-bold">
               Home
